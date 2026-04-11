@@ -65,5 +65,6 @@ public class User {
                     @UniqueConstraint(columnNames = {"user_id", "role_id"})
             }
     )
+    @Builder.Default
     private Set<Role> roles = new HashSet<>();
 }
