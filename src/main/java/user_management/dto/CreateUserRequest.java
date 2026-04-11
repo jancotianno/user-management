@@ -4,6 +4,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 public class CreateUserRequest {
 
@@ -19,4 +21,6 @@ public class CreateUserRequest {
 
     @NotBlank
     private String codiceFiscale;
+
+    private Set<String> roles;
 }

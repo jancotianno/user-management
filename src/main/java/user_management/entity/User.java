@@ -2,6 +2,7 @@ package user_management.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Where;
 import user_management.enumeration.UserStatus;
 
@@ -51,6 +52,7 @@ public class User {
     @Column(nullable = false)
     private UserStatus status;
 
+    @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -67,4 +69,16 @@ public class User {
     )
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
+
+    @PrePersist
+    public void prePersist() {
+
+        if (this.status == null) {
+            this.status = UserStatus.ACTIVE;
+        }
+
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+    }
 }

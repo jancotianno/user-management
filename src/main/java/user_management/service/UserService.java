@@ -31,24 +31,45 @@ public class UserService {
 
     public UserResponse createUser(CreateUserRequest request) {
 
+        // 1. check unicità email
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new ConflictException("Email già presente");
         }
 
+        // 2. check unicità codice fiscale
         if (userRepository.existsByCodiceFiscale(request.getCodiceFiscale())) {
             throw new ConflictException("Codice fiscale già presente");
         }
 
-        User user = User.builder()
-                .nome(request.getNome())
-                .cognome(request.getCognome())
-                .email(request.getEmail())
-                .codiceFiscale(request.getCodiceFiscale())
-                .status(UserStatus.ACTIVE)
-                .createdAt(LocalDateTime.now())
-                .build();
+        User user = new User();
+        user.setNome(request.getNome());
+        user.setCognome(request.getCognome());
+        user.setEmail(request.getEmail());
+        user.setCodiceFiscale(request.getCodiceFiscale());
 
-        return UserMapper.toResponse(userRepository.save(user));
+        // 3. gestione ruoli
+        Set<Role> roles;
+
+        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+
+            roles = request.getRoles().stream()
+                    .map(roleName -> roleRepository.findByName(roleName)
+                            .orElseThrow(() -> new RuntimeException("Role non trovato: " + roleName)))
+                    .collect(Collectors.toSet());
+
+        } else {
+
+            Role defaultRole = roleRepository.findByName("REPORTER")
+                    .orElseThrow(() -> new RuntimeException("Default role REPORTER non configurato"));
+
+            roles = Set.of(defaultRole);
+        }
+
+        user.setRoles(roles);
+
+        User saved = userRepository.save(user);
+
+        return UserMapper.toResponse(saved);
     }
 
     public Page<UserResponse> getUsers(Pageable pageable) {
