@@ -20,4 +20,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByCodiceFiscaleAndIdNot(String codiceFiscale, Long id);
 
+    Optional<User> findByUsername(String username);
+
 }

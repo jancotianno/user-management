@@ -10,6 +10,7 @@ import java.util.Set;
 public class UserResponse {
 
     private Long id;
+    private String username;
     private String nome;
     private String cognome;
     private String email;

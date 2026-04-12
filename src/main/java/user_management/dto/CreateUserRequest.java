@@ -2,12 +2,17 @@ package user_management.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.Set;
 
 @Data
 public class CreateUserRequest {
+
+    @Size(min = 3, max = 50)
+    @NotBlank
+    private String username;
 
     @NotBlank
     private String nome;
