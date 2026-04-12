@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import user_management.dto.CreateUserRequest;
 import user_management.dto.UpdateUserRequest;
@@ -29,6 +30,8 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     public UserResponse createUser(CreateUserRequest request) {
         log.info("Creating user - username={}, email={}",
                 request.getUsername(),
@@ -46,6 +49,7 @@ public class UserServiceImpl implements UserService {
 
         User user = new User();
         user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setNome(request.getNome());
         user.setCognome(request.getCognome());
         user.setEmail(request.getEmail());

@@ -16,6 +16,9 @@ public class CreateUserRequest {
     private String username;
 
     @NotBlank
+    private String password;
+
+    @NotBlank
     private String nome;
 
     @NotBlank
