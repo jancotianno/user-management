@@ -17,7 +17,6 @@ import user_management.mapper.UserMapper;
 import user_management.repository.RoleRepository;
 import user_management.repository.UserRepository;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -128,19 +127,9 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        // CHECK CF UNIQUE
-        Optional<User> existing = userRepository.findByCodiceFiscaleAndIdNot(
-                        request.getCodiceFiscale(), id
-                );
-
-        if (existing.isPresent()) {
-            throw new ConflictException("Codice fiscale already present for another user");
-        }
-
         user.setNome(request.getNome());
         user.setCognome(request.getCognome());
         user.setEmail(request.getEmail());
-        user.setCodiceFiscale(request.getCodiceFiscale());
 
         // roles
         if (request.getRoles() != null) {

@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import user_management.validation.ValidCodiceFiscale;
 
 import java.util.Set;
 
@@ -24,6 +25,7 @@ public class CreateUserRequest {
     @Email
     private String email;
 
+    @ValidCodiceFiscale
     @NotBlank
     private String codiceFiscale;
 

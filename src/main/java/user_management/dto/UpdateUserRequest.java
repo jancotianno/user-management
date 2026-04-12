@@ -3,6 +3,7 @@ package user_management.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import user_management.validation.ValidCodiceFiscale;
 
 import java.util.Set;
 
@@ -18,9 +19,6 @@ public class UpdateUserRequest {
     @Email
     @NotBlank
     private String email;
-
-    @NotBlank
-    private String codiceFiscale;
 
     private Set<String> roles;
 }
