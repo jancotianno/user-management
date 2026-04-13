@@ -5,15 +5,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import user_management.dto.AssignRoleRequest;
-import user_management.dto.CreateUserRequest;
-import user_management.dto.UpdateUserRequest;
-import user_management.dto.UserResponse;
+import user_management.annotation.AuditLog;
+import user_management.dto.*;
 import user_management.service.UserService;
 
 @Tag(name = "Users", description = "API gestione utenti")
@@ -31,6 +29,7 @@ public class UserController {
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @AuditLog(action = "CREATE_USER")
     public UserResponse createUser(@Valid @RequestBody CreateUserRequest request) {
         return userService.createUser(request);
     }
@@ -41,8 +40,12 @@ public class UserController {
             description = "Restituisce una lista paginata di utenti attivi (esclusi quelli soft-deleted), con possibilità di ordinamento e filtraggio futuro."
     )
     @GetMapping
-    public Page<UserResponse> getUsers(@PageableDefault(size = 10, sort = "id") Pageable pageable) {
-        return userService.getUsers(pageable);
+    public Page<UserListResponse> getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userService.getAllUsers(pageable);
     }
 
     @PreAuthorize("hasAnyRole('OWNER','DEVELOPER','REPORTER')")
@@ -62,6 +65,7 @@ public class UserController {
     )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @AuditLog(action = "DELETE_USER")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
@@ -82,6 +86,7 @@ public class UserController {
             description = "Aggiorna i dati anagrafici e/o i ruoli di un utente. La modifica dei ruoli è sostitutiva (replace completo)."
     )
     @PutMapping("/{id}")
+    @AuditLog(action = "UPDATE_USER")
     public UserResponse updateUser(
             @PathVariable Long id,
             @Valid @RequestBody UpdateUserRequest request) {

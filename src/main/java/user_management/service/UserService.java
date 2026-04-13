@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import user_management.dto.CreateUserRequest;
 import user_management.dto.UpdateUserRequest;
+import user_management.dto.UserListResponse;
 import user_management.dto.UserResponse;
 
 public interface UserService {
@@ -19,4 +20,6 @@ public interface UserService {
     void deleteUser(Long id);
 
     UserResponse assignRole(Long userId, String roleName);
+
+    Page<UserListResponse> getAllUsers(Pageable pageable );
 }

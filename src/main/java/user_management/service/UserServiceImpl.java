@@ -2,12 +2,15 @@ package user_management.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import user_management.dto.CreateUserRequest;
 import user_management.dto.UpdateUserRequest;
+import user_management.dto.UserListResponse;
 import user_management.dto.UserResponse;
 import user_management.entity.Role;
 import user_management.entity.User;
@@ -92,6 +95,18 @@ public class UserServiceImpl implements UserService {
         return users.map(UserMapper::toResponse);
     }
 
+    public Page<UserListResponse> getAllUsers(Pageable pageable) {
+
+        Page<User> users = userRepository.findAll(pageable);
+
+        return users.map(user -> new UserListResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getNome(),
+                user.getCognome()
+        ));
+    }
+
     public void deleteUser(Long id) {
         log.info("Soft deleting user - id={}", id);
 
@@ -117,6 +132,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toResponse(userRepository.save(user));
     }
 
+    @Cacheable(value = "users", key = "#id")
     public UserResponse getUserById(Long id) {
 
         User user = userRepository.findById(id)
@@ -125,6 +141,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toResponse(user);
     }
 
+    @CacheEvict(value = "users", key = "#id")
     public UserResponse updateUser(Long id, UpdateUserRequest request) {
         log.info("Updating user - id={}", id);
 
