@@ -7,6 +7,11 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AuditLog {
+public @interface AuditLogAction {
+
     String action();
+
+    String entity() default "";
+
+    String entityIdParam() default "";
 }

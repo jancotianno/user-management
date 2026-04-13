@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import user_management.annotation.AuditLog;
+import user_management.annotation.AuditLogAction;
 import user_management.dto.*;
 import user_management.service.UserService;
 
@@ -29,7 +29,11 @@ public class UserController {
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @AuditLog(action = "CREATE_USER")
+    @AuditLogAction(
+            action = "CREATE_USER",
+            entity = "User",
+            entityIdParam = "id"
+    )
     public UserResponse createUser(@Valid @RequestBody CreateUserRequest request) {
         return userService.createUser(request);
     }
@@ -65,7 +69,11 @@ public class UserController {
     )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @AuditLog(action = "DELETE_USER")
+    @AuditLogAction(
+            action = "DELETE_USER",
+            entity = "User",
+            entityIdParam = "id"
+    )
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
@@ -86,7 +94,7 @@ public class UserController {
             description = "Aggiorna i dati anagrafici e/o i ruoli di un utente. La modifica dei ruoli è sostitutiva (replace completo)."
     )
     @PutMapping("/{id}")
-    @AuditLog(action = "UPDATE_USER")
+    @AuditLogAction(action = "UPDATE_USER")
     public UserResponse updateUser(
             @PathVariable Long id,
             @Valid @RequestBody UpdateUserRequest request) {

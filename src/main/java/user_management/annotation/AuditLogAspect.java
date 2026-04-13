@@ -1,53 +1,49 @@
 package user_management.annotation;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import user_management.entity.AuditLogEntity;
+import user_management.repository.AuditLogRepository;
+
+
+import java.time.LocalDateTime;
 
 @Aspect
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class AuditLogAspect {
 
-    @Around("@annotation(auditLog)")
-    public Object logAudit(ProceedingJoinPoint joinPoint, AuditLog auditLog) throws Throwable {
+    private final AuditLogRepository auditLogRepository;
 
-        String username = "SYSTEM";
+    @Around("@annotation(auditLogAction)")
+    public Object log(ProceedingJoinPoint joinPoint, AuditLogAction auditLogAction) throws Throwable {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getName() != null) {
-            username = auth.getName();
-        }
+        log.info("AUDIT TRIGGERED");
 
-        long start = System.currentTimeMillis();
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        AuditLogEntity log = new AuditLogEntity();
+        log.setUsername(username);
+        log.setAction(auditLogAction.action());
+        log.setCreatedAt(LocalDateTime.now());
+        log.setStatus("SUCCESS");
 
         try {
             Object result = joinPoint.proceed();
-
-            long time = System.currentTimeMillis() - start;
-
-            log.info("AUDIT | USER={} | ACTION={} | METHOD={} | TIME={}ms",
-                    username,
-                    auditLog.action(),
-                    joinPoint.getSignature().getName(),
-                    time
-            );
-
+            auditLogRepository.save(log);
             return result;
 
         } catch (Exception ex) {
-
-            log.error("AUDIT FAILED | USER={} | ACTION={} | METHOD={} | ERROR={}",
-                    username,
-                    auditLog.action(),
-                    joinPoint.getSignature().getName(),
-                    ex.getMessage()
-            );
-
+            log.setStatus("FAILED");
+            auditLogRepository.save(log);
             throw ex;
         }
     }
