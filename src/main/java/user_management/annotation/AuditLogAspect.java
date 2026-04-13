@@ -1,5 +1,6 @@
 package user_management.annotation;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -7,11 +8,14 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import user_management.entity.AuditLogEntity;
 import user_management.repository.AuditLogRepository;
 
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Aspect
 @Component
@@ -24,7 +28,24 @@ public class AuditLogAspect {
     @Around("@annotation(auditLogAction)")
     public Object log(ProceedingJoinPoint joinPoint, AuditLogAction auditLogAction) throws Throwable {
 
-        log.info("AUDIT TRIGGERED");
+        HttpServletRequest request =
+                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                        .getRequest();
+
+        Object[] args = joinPoint.getArgs();
+        Long entityId = null;
+
+        for (Object arg : args) {
+            if (arg instanceof Long) {
+                entityId = (Long) arg;
+                break;
+            }
+        }
+
+        String endpoint = request.getRequestURI();
+        String method = request.getMethod();
+
+        String details = Arrays.toString(joinPoint.getArgs());
 
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
@@ -35,6 +56,10 @@ public class AuditLogAspect {
         log.setAction(auditLogAction.action());
         log.setCreatedAt(LocalDateTime.now());
         log.setStatus("SUCCESS");
+        log.setEndpoint(endpoint);
+        log.setHttpMethod(method);
+        log.setEntityId(entityId);
+        log.setDetails(details);
 
         try {
             Object result = joinPoint.proceed();

@@ -94,7 +94,10 @@ public class UserController {
             description = "Aggiorna i dati anagrafici e/o i ruoli di un utente. La modifica dei ruoli è sostitutiva (replace completo)."
     )
     @PutMapping("/{id}")
-    @AuditLogAction(action = "UPDATE_USER")
+    @AuditLogAction(
+            action = "UPDATE_USER",
+            entity = "User",
+            entityIdParam = "id")
     public UserResponse updateUser(
             @PathVariable Long id,
             @Valid @RequestBody UpdateUserRequest request) {
