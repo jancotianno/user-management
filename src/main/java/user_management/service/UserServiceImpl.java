@@ -8,19 +8,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import user_management.dto.CreateUserRequest;
-import user_management.dto.UpdateUserRequest;
-import user_management.dto.UserListResponse;
-import user_management.dto.UserResponse;
+import user_management.dto.*;
 import user_management.entity.Role;
 import user_management.entity.User;
 import user_management.enumeration.UserStatus;
+import user_management.event.model.UserCreatedEvent;
 import user_management.exception.ConflictException;
 import user_management.exception.UserNotFoundException;
 import user_management.mapper.UserMapper;
+import user_management.event.producer.UserEventProducer;
 import user_management.repository.RoleRepository;
 import user_management.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,6 +34,8 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final UserEventProducer userEventProducer;
 
     public UserResponse createUser(CreateUserRequest request) {
         log.info("Creating user - username={}, email={}",
@@ -81,6 +83,14 @@ public class UserServiceImpl implements UserService {
         User saved = userRepository.save(user);
 
         log.info("User created successfully - id={}", saved.getId());
+
+        UserCreatedEvent event = new UserCreatedEvent(
+                user.getId(),
+                user.getUsername(),
+                LocalDateTime.now()
+        );
+
+        userEventProducer.sendUserCreatedEvent(event);
 
         return UserMapper.toResponse(saved);
     }

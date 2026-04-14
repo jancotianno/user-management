@@ -1,5 +1,6 @@
 package user_management.annotation;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +14,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import user_management.entity.AuditLogEntity;
 import user_management.repository.AuditLogRepository;
 
-
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 @Aspect
 @Component
@@ -24,6 +23,8 @@ import java.util.Arrays;
 public class AuditLogAspect {
 
     private final AuditLogRepository auditLogRepository;
+
+    private final ObjectMapper objectMapper;
 
     @Around("@annotation(auditLogAction)")
     public Object log(ProceedingJoinPoint joinPoint, AuditLogAction auditLogAction) throws Throwable {
@@ -45,7 +46,7 @@ public class AuditLogAspect {
         String endpoint = request.getRequestURI();
         String method = request.getMethod();
 
-        String details = Arrays.toString(joinPoint.getArgs());
+        String details = objectMapper.writeValueAsString(joinPoint.getArgs());
 
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
