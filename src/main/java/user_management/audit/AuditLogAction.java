@@ -1,4 +1,4 @@
-package user_management.annotation;
+package user_management.audit;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

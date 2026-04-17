@@ -75,6 +75,19 @@ public class User {
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
+    public User(long id, String username, String password, String nome, String cognome, String mail, String codiceFiscale,
+                UserStatus userStatus, Set<Role> roles) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.nome = nome;
+        this.cognome = cognome;
+        this.email = mail;
+        this.codiceFiscale = codiceFiscale;
+        this.status = userStatus;
+        this.roles = roles;
+    }
+
     @PrePersist
     public void prePersist() {
 
