@@ -19,17 +19,50 @@ Le principali funzionalità includono:
 * caching per migliorare le performance
 * audit logging delle operazioni principali
 
-L'applicazione è stata progettata in modo da poter essere facilmente estesa, ad esempio integrando un'architettura event-driven (es. Kafka).
-
-
 ## Descrizione del progetto
-* Java
+* Java 17
 * Spring Boot
 * Spring Security
 * JWT (JSON Web Token)
 * JPA / Hibernate
+* PostgreSQL
 * Maven
+* Apache Kafka
 
+---
+
+### Scelte tecniche
+
+Durante lo sviluppo ho cercato di applicare alcune buone pratiche tipiche di progetti reali:
+* **Separazione tra Entity e DTO**
+  per evitare esposizione diretta del modello dati
+* **Mapper dedicati**
+  per ridurre accoppiamento tra livelli
+* **Pagination**
+  per gestire in modo efficiente liste di utenti
+* **Caching**
+  per ridurre accessi ripetuti al database
+* **Ottimizzazione query (EntityGraph)**
+  per evitare problemi di N+1
+* **Audit logging con AOP**
+  per tracciare le operazioni senza sporcare il codice business
+* **Validazione input**
+  per garantire coerenza dei dati
+* **PostgreSQL**
+  è stato scelto per robustezza, supporto a JSONB e capacità di scalare rispetto a H2/MySQL in scenari reali
+* **Versioning db**
+  gestito tramite Flyway
+
+---
+
+### Scelta del database
+
+È stato utilizzato PostgreSQL per:
+- robustezza e affidabilità
+- maggiore aderenza a scenari reali rispetto a database embedded
+- possibilità di estendere facilmente il modello dati in futuro
+
+---
 
 ### Build ed esecuzione
 Per avviare il progetto:
@@ -46,42 +79,63 @@ Swagger UI:
 
 http://localhost:8080/swagger-ui.html
 
+---
+
 ### Autenticazione e autorizzazione
 Il sistema utilizza autenticazione stateless basata su JWT.
 
+1. Login
+
+Effettuare una richiesta: 
+_POST /auth/login_
+
+Esempio body:
+
+_{
+"username": "admin",
+"password": "admin"
+}_
+
+2. Utilizzo del token
+
 Dopo il login, viene restituito un token che deve essere incluso nelle richieste successive.
 
-È stato implementato un sistema RBAC con i seguenti ruoli:
+copiare il token restituito
+cliccare su Authorize in Swagger
+inserire:
 
-* OWNER
-  * DEVELOPER
-    * REPORTER
+_Bearer token_
 
-### Scelte tecniche
+#### Autorizzazione (RBAC)
 
-Durante lo sviluppo ho cercato di applicare alcune buone pratiche tipiche di progetti reali:
-* **Separazione tra Entity e DTO**
-  per evitare esposizione diretta del modello dati
-* **Pagination**
-  per gestire in modo efficiente liste di utenti
-* **Caching**
-  per ridurre accessi ripetuti al database
-* **Ottimizzazione query (EntityGraph)**
-  per evitare problemi di N+1
-* **Audit logging con AOP**
-  per tracciare le operazioni senza sporcare il codice business
-* **Validazione input**
-  per garantire coerenza dei dati
+Ho implementato RBAC utilizzando Spring Security e l’annotazione _@PreAuthorize_, definendo regole di accesso basate sui ruoli dell’utente per ogni endpoint.
+
+Esempio:
+
+_@PreAuthorize("hasAnyRole('OWNER','DEVELOPER','REPORTER')")_
+
+---
+
+
+### Branching strategy
+
+Il progetto è stato sviluppato utilizzando una strategia a feature branches:
+
+main contiene una versione stabile del codice
+ogni funzionalità è sviluppata su branch separati
+merge effettuati al completamento delle feature
+
+---
 
 ### Possibili evoluzioni
 
 Il progetto è stato pensato per essere esteso facilmente. Alcune possibili evoluzioni:
 
-* integrazione con Kafka per gestione eventi
-*  persistenza dei log di audit su database
 *  gestione più avanzata dei permessi
 *  monitoring e metrics
+* containerizzazione dell'applicativo
 
+---
 ### Note finali
 
 Il focus principale è stato creare una base solida e leggibile, più che aggiungere funzionalità complesse.
