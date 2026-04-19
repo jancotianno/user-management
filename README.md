@@ -102,11 +102,8 @@ Esempio body:
 
 Dopo il login, viene restituito un token che deve essere incluso nelle richieste successive.
 
-copiare il token restituito
-cliccare su Authorize in Swagger
-inserire:
-
-_Bearer token_
+- copiare il token restituito
+- cliccare su Authorize in Swagger ed inserire: _Bearer token_
 
 #### Autorizzazione (RBAC)
 
@@ -124,9 +121,9 @@ Esempio:
 
 Il progetto è stato sviluppato utilizzando una strategia a feature branches:
 
-main contiene una versione stabile del codice
-ogni funzionalità è sviluppata su branch separati
-merge effettuati al completamento delle feature
+- _main_ contiene una versione stabile del codice
+- ogni funzionalità è sviluppata su branch separati
+- merge effettuati al completamento delle feature
 
 ---
 ### Eventi e integrazione Kafka
@@ -249,7 +246,6 @@ Dopo una build completata con successo:
     * `dev` → funzionalità di sviluppo (es. bootstrap dati)
     * `postgres` → configurazione database PostgreSQL
 
----
 
 ### Possibili evoluzioni
 
@@ -258,6 +254,7 @@ Dopo una build completata con successo:
 * Deploy su cloud (AWS, Azure, GCP)
 * Monitoraggio con strumenti come Prometheus e Grafana
 
+---
 
 ### Possibili evoluzioni progettuali
 
