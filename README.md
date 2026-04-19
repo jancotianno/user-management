@@ -187,6 +187,22 @@ Vantaggi dell’approccio
 
 ---
 
+## Mascheramento dei dati in base al ruolo
+
+Nel sistema ho implementato un meccanismo di field-level masking basato su ruolo, applicato in fase di serializzazione JSON tramite Jackson.
+Alcuni campi dei DTO sono annotati con @MaskForRoles, che indica per quali ruoli il valore deve essere mascherato.
+
+A runtime, un _BeanSerializerModifier_ e un _BeanPropertyWriter_ custom:
+
+- leggono l’annotazione _@MaskForRoles_ sui campi
+- recuperano i ruoli dell’utente autenticato dal _SecurityContext_
+- sostituiscono il valore reale con una stringa mascherata (es. "******") quando il ruolo corrente è tra quelli configurati
+
+
+
+
+---
+
 ## CI/CD – Configurazione base
 
 Il progetto è predisposto per essere integrato con una pipeline CI/CD utilizzando strumenti come GitHub Actions, GitLab CI o Jenkins.

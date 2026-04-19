@@ -21,5 +21,5 @@ public interface UserService {
 
     UserResponse assignRole(Long userId, String roleName);
 
-    Page<UserListResponse> getAllUsers(Pageable pageable );
+    Page<UserListResponse> getAllUsers(Pageable pageable);
 }

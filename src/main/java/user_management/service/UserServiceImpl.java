@@ -8,15 +8,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import user_management.dto.*;
+import user_management.dto.CreateUserRequest;
+import user_management.dto.UpdateUserRequest;
+import user_management.dto.UserListResponse;
+import user_management.dto.UserResponse;
 import user_management.entity.Role;
 import user_management.entity.User;
 import user_management.enumeration.UserStatus;
 import user_management.event.model.UserCreatedEvent;
+import user_management.event.producer.UserEventProducer;
 import user_management.exception.ConflictException;
 import user_management.exception.UserNotFoundException;
 import user_management.mapper.UserMapper;
-import user_management.event.producer.UserEventProducer;
 import user_management.repository.RoleRepository;
 import user_management.repository.UserRepository;
 
@@ -113,7 +116,8 @@ public class UserServiceImpl implements UserService {
                 user.getId(),
                 user.getUsername(),
                 user.getNome(),
-                user.getCognome()
+                user.getCognome(),
+                user.getEmail()
         ));
     }
 
