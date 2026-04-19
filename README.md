@@ -4,13 +4,13 @@
 
 Questo progetto è un'applicazione Spring Boot che espone API REST per la gestione degli utenti.
 
-L'obiettivo è stato costruire un sistema semplice ma strutturato, con particolare attenzione a:
+L'obiettivo è stato sviluppare un sistema semplice ma strutturato, ponendo particolare attenzione a:
 * autenticazione e autorizzazione
 * organizzazione del codice
 * ottimizzazione delle performance
 * tracciamento delle operazioni
 
-Le principali funzionalità includono:
+Le principali funzionalità del progetto includono:
 * registrazione e gestione utenti
 * autenticazione tramite JWT
 * controllo accessi basato su ruoli (RBAC)
@@ -19,7 +19,7 @@ Le principali funzionalità includono:
 * caching per migliorare le performance
 * audit logging delle operazioni principali
 
-## Descrizione del progetto
+## Tecnologie e strumenti utilizzati
 * Java 17
 * Spring Boot
 * Spring Security
@@ -49,7 +49,7 @@ Durante lo sviluppo ho cercato di applicare alcune buone pratiche tipiche di pro
 * **Validazione input**
   per garantire coerenza dei dati
 * **PostgreSQL**
-  è stato scelto per robustezza, supporto a JSONB e capacità di scalare rispetto a H2/MySQL in scenari reali
+  è stato scelto per robustezza, supporto a JSONB e capacità di scalare
 * **Versioning db**
   gestito tramite Flyway
 
@@ -100,7 +100,7 @@ Esempio body:
 
 2. Utilizzo del token
 
-Dopo il login, viene restituito un token che deve essere incluso nelle richieste successive.
+Dopo il login, viene restituito un token che da includere nelle richieste successive.
 
 - copiare il token restituito
 - cliccare su Authorize in Swagger ed inserire: _Bearer token_
@@ -149,7 +149,7 @@ In questo caso, l’evento viene utilizzato per simulare l’invio di una email 
 
 Producer
 
-Il producer invia l’evento su un topic Kafka:
+Il producer pubblica l’evento su un topic Kafka:
 ```java
 kafkaTemplate.send(topic, event.getUserId().toString(), event);
 ```
@@ -241,6 +241,7 @@ Dopo una build completata con successo:
    ```
 
 3. **Configurazione ambienti**
+
    L’applicazione utilizza i seguenti profili Spring:
 
     * `dev` → funzionalità di sviluppo (es. bootstrap dati)
@@ -258,7 +259,9 @@ Dopo una build completata con successo:
 
 ### Possibili evoluzioni progettuali
 
-Il progetto è stato pensato per essere esteso facilmente. Alcune possibili evoluzioni:
+Il progetto è stato concepito per essere facilmente estendibile. 
+
+Tra le possibili evoluzioni:
 
 * gestione più avanzata dei permessi
 * monitoring e metrics
@@ -267,6 +270,6 @@ Il progetto è stato pensato per essere esteso facilmente. Alcune possibili evol
 ---
 ### Note finali
 
-Il focus principale è stato creare una base solida e leggibile, più che aggiungere funzionalità complesse.
+L'obiettivo principale è stato costruire una base solida e facile da leggere, più che aggiungere funzionalità complesse.
 
 Ho cercato di mantenere il codice il più possibile pulito e organizzato, seguendo principi di separazione delle responsabilità.
