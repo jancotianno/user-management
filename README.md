@@ -187,13 +187,68 @@ Vantaggi dell’approccio
 
 ---
 
+## CI/CD – Configurazione base
 
-### Possibili evoluzioni prgoettuali
+Il progetto è predisposto per essere integrato con una pipeline CI/CD utilizzando strumenti come GitHub Actions, GitLab CI o Jenkins.
+
+### Continuous Integration (CI)
+
+Ad ogni push o pull request sul branch principale (`main`), la pipeline esegue:
+
+1. **Checkout del codice**
+2. **Build dell’applicazione**
+
+   ```bash
+   mvn clean install
+   ```
+3. **Esecuzione dei test**
+
+    * Test unitari (JUnit)
+    * Test di integrazione
+4. **Analisi statica del codice (opzionale)**
+
+    * Checkstyle / SpotBugs
+
+---
+
+### Continuous Delivery (CD)
+
+Dopo una build completata con successo:
+
+1. **Build dell’immagine Docker**
+
+   ```bash
+   docker build -t user-management-app .
+   ```
+
+2. **Avvio dei servizi tramite Docker Compose**
+
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Configurazione ambienti**
+   L’applicazione utilizza i seguenti profili Spring:
+
+    * `dev` → funzionalità di sviluppo (es. bootstrap dati)
+    * `postgres` → configurazione database PostgreSQL
+
+---
+
+### Possibili evoluzioni
+
+* Integrazione completa con GitHub Actions
+* Push automatico dell’immagine Docker su registry (Docker Hub)
+* Deploy su cloud (AWS, Azure, GCP)
+* Monitoraggio con strumenti come Prometheus e Grafana
+
+
+### Possibili evoluzioni progettuali
 
 Il progetto è stato pensato per essere esteso facilmente. Alcune possibili evoluzioni:
 
-*  gestione più avanzata dei permessi
-*  monitoring e metrics
+* gestione più avanzata dei permessi
+* monitoring e metrics
 * containerizzazione dell'applicativo
 
 ---

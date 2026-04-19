@@ -48,12 +48,12 @@ public class UserController {
             description = "Restituisce una lista paginata di utenti attivi (esclusi quelli soft-deleted), con possibilità di ordinamento e filtraggio futuro."
     )
     @GetMapping
-    public Page<UserListResponse> getUsers(
+    public ResponseEntity<Page<UserListResponse>> getUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return userService.getAllUsers(pageable);
+        return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
 
     @PreAuthorize("hasAnyRole('OWNER','DEVELOPER','REPORTER')")
@@ -62,8 +62,8 @@ public class UserController {
             description = "Recupera i dettagli completi di un utente specifico tramite ID, inclusi i ruoli associati."
     )
     @GetMapping("/{id}")
-    public UserResponse getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @PreAuthorize("hasAnyRole('OWNER','OPERATOR')")
@@ -88,6 +88,11 @@ public class UserController {
             description = "Esegue un aggiornamento dei ruoli per l'utente."
     )
     @PostMapping("/{id}/roles")
+    @AuditLogAction(
+            action = "ASSIGN_ROLE",
+            entity = "User",
+            entityIdParam = "id"
+    )
     public UserResponse assignRole(@PathVariable Long id, @RequestBody AssignRoleRequest request) {
         return userService.assignRole(id, request.getRoleName());
     }
