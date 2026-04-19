@@ -1,5 +1,6 @@
 package user_management.audit;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,7 @@ public class AuditLogAspect {
         String endpoint = request.getRequestURI();
         String method = request.getMethod();
 
-        String details = objectMapper.writeValueAsString(joinPoint.getArgs());
+        JsonNode details = objectMapper.valueToTree(joinPoint.getArgs());
 
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()

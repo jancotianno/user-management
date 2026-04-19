@@ -91,10 +91,12 @@ _POST /auth/login_
 
 Esempio body:
 
-_{
+```json
+{
 "username": "admin",
 "password": "admin"
-}_
+}
+```
 
 2. Utilizzo del token
 
@@ -111,8 +113,9 @@ _Bearer token_
 Ho implementato RBAC utilizzando Spring Security e l’annotazione _@PreAuthorize_, definendo regole di accesso basate sui ruoli dell’utente per ogni endpoint.
 
 Esempio:
-
-_@PreAuthorize("hasAnyRole('OWNER','DEVELOPER','REPORTER')")_
+```java
+@PreAuthorize("hasAnyRole('OWNER','DEVELOPER','REPORTER')")
+```
 
 ---
 
@@ -126,8 +129,66 @@ ogni funzionalità è sviluppata su branch separati
 merge effettuati al completamento delle feature
 
 ---
+## Eventi e integrazione Kafka
 
-### Possibili evoluzioni
+L’applicazione include un primo esempio di integrazione event-driven utilizzando Apache Kafka.
+
+### Evento: UserCreatedEvent
+
+Quando viene creato un nuovo utente, viene pubblicato un evento:
+
+```java
+public class UserCreatedEvent {
+    private Long userId;
+    private String username;
+    private LocalDateTime createdAt;
+}
+```
+Scopo dell’evento
+
+L’obiettivo dell’evento è disaccoppiare la logica di creazione utente da eventuali azioni successive, permettendo di reagire alla creazione di un utente in modo asincrono.
+
+In questo caso, l’evento viene utilizzato per simulare l’invio di una email di benvenuto.
+
+Producer
+
+Il producer invia l’evento su un topic Kafka:
+```java
+kafkaTemplate.send(topic, event.getUserId().toString(), event);
+```
+
+Consumer
+
+Un consumer intercetta l’evento e gestisce la logica successiva:
+
+```java
+@KafkaListener(topics = "${kafka.topic.user-created}", groupId = "user-group")
+```
+
+Nel caso attuale:
+
+- viene loggato l’evento ricevuto
+- viene simulato l’invio di una email di benvenuto
+
+Esempio di utilizzo
+
+Alla creazione di un utente:
+
+- viene salvato nel database
+- viene pubblicato un evento UserCreatedEvent
+- il consumer riceve l’evento
+- viene inviata una email di benvenuto (simulata via log)
+
+Vantaggi dell’approccio
+- disaccoppiamento tra servizi
+- maggiore scalabilità
+- possibilità di aggiungere nuovi consumer senza modificare il codice esistente
+- migliore gestione di operazioni asincrone
+
+---
+
+
+### Possibili evoluzioni prgoettuali
 
 Il progetto è stato pensato per essere esteso facilmente. Alcune possibili evoluzioni:
 

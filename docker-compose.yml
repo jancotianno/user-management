@@ -1,5 +1,18 @@
 services:
 
+  postgres:
+    image: postgres:15.5
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: userdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeper
@@ -42,3 +55,6 @@ services:
             local:
               properties:
                 bootstrap.servers: "kafka:29092"
+
+volumes:
+  postgres_data:
