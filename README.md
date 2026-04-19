@@ -129,11 +129,11 @@ ogni funzionalità è sviluppata su branch separati
 merge effettuati al completamento delle feature
 
 ---
-## Eventi e integrazione Kafka
+### Eventi e integrazione Kafka
 
 L’applicazione include un primo esempio di integrazione event-driven utilizzando Apache Kafka.
 
-### Evento: UserCreatedEvent
+#### Evento: UserCreatedEvent
 
 Quando viene creato un nuovo utente, viene pubblicato un evento:
 
@@ -187,7 +187,7 @@ Vantaggi dell’approccio
 
 ---
 
-## Mascheramento dei dati in base al ruolo
+### Mascheramento dei dati in base al ruolo
 
 Nel sistema ho implementato un meccanismo di field-level masking basato su ruolo, applicato in fase di serializzazione JSON tramite Jackson.
 Alcuni campi dei DTO sono annotati con @MaskForRoles, che indica per quali ruoli il valore deve essere mascherato.
@@ -203,11 +203,11 @@ A runtime, un _BeanSerializerModifier_ e un _BeanPropertyWriter_ custom:
 
 ---
 
-## CI/CD – Configurazione base
+### CI/CD – Configurazione base
 
 Il progetto è predisposto per essere integrato con una pipeline CI/CD utilizzando strumenti come GitHub Actions, GitLab CI o Jenkins.
 
-### Continuous Integration (CI)
+#### Continuous Integration (CI)
 
 Ad ogni push o pull request sul branch principale (`main`), la pipeline esegue:
 
@@ -227,7 +227,7 @@ Ad ogni push o pull request sul branch principale (`main`), la pipeline esegue:
 
 ---
 
-### Continuous Delivery (CD)
+#### Continuous Delivery (CD)
 
 Dopo una build completata con successo:
 
